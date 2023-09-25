@@ -91,8 +91,11 @@ backcastopts=[2,3,4,5,6,7]
 def main():
 	maindir = os.getcwd()+'/'+outstr
 
-	os.makedirs(maindir)
-	
+	# Nawawy's start
+	if not os.path.exists(maindir):
+		os.makedirs(maindir)
+	# Nawawy's end
+
 	basedir=maindir
 	
 	#some arrays to store losses for later
@@ -109,11 +112,17 @@ def main():
 			if subb==0:
 				sub=99
 				maindir=basedir+'/allsubs'
-				os.makedirs(maindir)
+				# Nawawy's start
+				if not os.path.exists(maindir):
+					os.makedirs(maindir)
+				# Nawawy's end
 			else:
 				sub=subb-1
 				maindir=basedir+'/'+subjects[sub]
-				os.makedirs(maindir)
+				# Nawawy's start
+				if not os.path.exists(maindir):
+					os.makedirs(maindir)
+				# Nawawy's end
 		else:
 			sub=99
 		curmodel=0
@@ -245,7 +254,10 @@ def main():
 ####################################  TRAINING, AND EVALUATION SECTION ############################################
 def train_and_evaluate(curmodel,maindir,forecast_length,backcast_length,sub,basedir):
 	mydir = maindir+'/model'+str(curmodel)
-	os.makedirs(mydir)
+	# Nawawy's start
+	if not os.path.exists(maindir):
+		os.makedirs(mydir)
+	# Nawawy's end
 	
 	#dump params
 	paramlist=[forecast_length,backcast_length]
@@ -263,9 +275,11 @@ def train_and_evaluate(curmodel,maindir,forecast_length,backcast_length,sub,base
 	testgen = ordered_data(batch_size, backcast_length, forecast_length,test)
 	
 	net = network(device,backcast_length,forecast_length,NUMBLOCKS)
-	optimiser = optim.Adam(net.parameters(),lr=.0002)
 
-	fit(net, optimiser, traingen,valgen,mydir, device,basedir)
+
+	optimiser = optim.Adam(net.parameters(),lr=.0002)
+	load(net, optimiser, mydir)
+	# fit(net, optimiser, traingen,valgen,mydir, device,basedir)
 
 	# Nawawy's start
 	# CALL URET HERE
